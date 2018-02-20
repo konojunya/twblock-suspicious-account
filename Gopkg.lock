@@ -2,6 +2,36 @@
 
 
 [[projects]]
+  name = "github.com/ChimeraCoder/anaconda"
+  packages = ["."]
+  revision = "0cb3e4c3ff8c6df5c73d5058c64e9c4eb6299c4b"
+  version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/ChimeraCoder/tokenbucket"
+  packages = ["."]
+  revision = "c5a927568de7aad8a58127d80bcd36ca4e71e454"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/azr/backoff"
+  packages = ["."]
+  revision = "53511d3c733003985b0b76f733df1f4d0095ee6a"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dustin/go-jsonpointer"
+  packages = ["."]
+  revision = "ba0abeacc3dcca5b9b20f31509c46794edbc9965"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dustin/gojson"
+  packages = ["."]
+  revision = "2e71ec9dd5adce3b168cd0dbde03b5cc04951c30"
+
+[[projects]]
   branch = "master"
   name = "github.com/garyburd/go-oauth"
   packages = ["oauth"]
@@ -74,6 +104,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1900282d1e6025b184c520dd0c503a8936901d7b23f7e9ff0a88a35ce9cd4137"
+  inputs-digest = "9620bde2334fe06706c682ad402a99db100aa1a3b75361f10f0ea5add33c5d6d"
   solver-name = "gps-cdcl"
   solver-version = 1
