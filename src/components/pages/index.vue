@@ -1,7 +1,8 @@
 <template>
   <section>
+    <button @click="next">もういっちょ！</button>
     <ul>
-      <li v-for="item in items" :key="item.id_str" class="card-item">
+      <li v-for="(item, index) in items" :key="index" class="card-item">
         <div class="container">
           <div class="profile">
             <div class="img">
@@ -21,17 +22,25 @@
 export default {
   data() {
     return {
-      items: []
+      items: [],
+      coursor: "-1"
     }
   },
   created() {
-    fetch("/api/users")
-    .then((res) => { return res.json() })
-    .then((res) => {
-      this.items = res
-    })
+    this.getUsers()
   },
   methods: {
+    next() {
+      this.getUsers()
+    },
+    getUsers() {
+      fetch(`/api/users?coursor=${this.coursor}`)
+      .then((res) => { return res.json() })
+      .then((res) => {
+        this.coursor = res.next_cursor_str
+        this.items = [...res.users, ...this.items]
+      })
+    },
     block(e) {
       const id = e.target.dataset.id
       fetch(`/api/users/${id}/block`, {

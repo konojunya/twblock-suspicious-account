@@ -2,8 +2,8 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/url"
 	"regexp"
 
@@ -28,10 +28,10 @@ func SetKeys(consumerKey, consumerSecret string) {
 }
 
 // GetUsers 怪しいユーザー一覧
-func GetUsers() ([]model.User, error) {
-	users, err := suspiciousFilter(api.GetUsers())
+func GetUsers(coursor string) (model.UsersResponse, error) {
+	users, err := suspiciousFilter(api.GetUsers(coursor))
 	if err != nil {
-		return nil, err
+		return model.UsersResponse{}, err
 	}
 
 	return users, nil
@@ -41,20 +41,22 @@ func HealthCheck() (model.HealthCheck, error) {
 	return api.healthCheck()
 }
 
-func suspiciousFilter(orgUsers []model.User, err error) ([]model.User, error) {
+func suspiciousFilter(orgUsers *model.UsersResponse, err error) (model.UsersResponse, error) {
 	if err != nil {
-		return nil, err
+		return model.UsersResponse{}, err
 	}
 
 	var users []model.User
-
-	for _, user := range orgUsers {
+	for _, user := range orgUsers.Users {
 		if isSuspicious(user.Description) {
 			users = append(users, user)
 		}
 	}
 
-	return users, nil
+	return model.UsersResponse{
+		NextCursorStr: orgUsers.NextCursorStr,
+		Users:         users,
+	}, nil
 }
 
 func isSuspicious(description string) bool {
@@ -108,52 +110,35 @@ func (api *TwitterClient) getMe() (model.User, error) {
 }
 
 // GetUsers 怪しいアカウント一覧を取得する
-func (api *TwitterClient) GetUsers() ([]model.User, error) {
+func (api *TwitterClient) GetUsers(coursor string) (*model.UsersResponse, error) {
 	client := GetClient()
 	v := url.Values{}
 	user, err := api.getMe()
 	if err != nil {
-		return nil, err
+		return &model.UsersResponse{}, err
 	}
-
-	var users []model.User
-	var nextCoursor string
 
 	v.Set("screen_name", user.ScreeName)
 	v.Set("count", "200")
+	v.Set("coursor", coursor)
+	log.Printf("coursor: %v\n", coursor)
 
-	for {
-		if nextCoursor == "" {
-			v.Set("coursor", "-1")
-		} else {
-			v.Set("coursor", nextCoursor)
-		}
+	res, err := client.Get(nil, api.Credentials, "https://api.twitter.com/1.1/followers/list.json", v)
+	if err != nil {
+		return &model.UsersResponse{}, err
+	}
+	defer res.Body.Close()
 
-		fmt.Printf("coursor: %v\n", nextCoursor)
-
-		res, err := client.Get(nil, api.Credentials, "https://api.twitter.com/1.1/followers/list.json", v)
-		if err != nil {
-			return nil, err
-		}
-		defer res.Body.Close()
-
-		body, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		var usersRes model.UsersResponse
-		json.Unmarshal(body, &usersRes)
-		nextCoursor = usersRes.NextCursorStr
-
-		users = append(users, usersRes.Users...)
-
-		if nextCoursor == "0" || nextCoursor == "" || nextCoursor == "-1" {
-			break
-		}
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return &model.UsersResponse{}, err
 	}
 
-	return users, nil
+	usersRes := &model.UsersResponse{}
+	json.Unmarshal(body, &usersRes)
+	log.Printf("next coursor: %v\n", usersRes.NextCursorStr)
+
+	return usersRes, nil
 }
 
 func (api *TwitterClient) healthCheck() (model.HealthCheck, error) {
