@@ -7,5 +7,5 @@ import (
 
 func apiRouter(api *gin.RouterGroup) {
 	api.GET("/users", controller.GetUsers)
-	api.POST("/users/:id/block", controller.BlockUser)
+	api.POST("/users/:screen_name/block", controller.BlockUser)
 }

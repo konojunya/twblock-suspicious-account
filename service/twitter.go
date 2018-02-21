@@ -58,8 +58,8 @@ func isSuspicious(description string) bool {
 }
 
 // BlockUser ユーザーをブロックする
-func BlockUser(id string) error {
-	return api.BlockUsers(id)
+func BlockUser(screenName string) error {
+	return api.BlockUsers(screenName)
 }
 
 // GetClient OAuthクライアントを取得する
@@ -105,10 +105,10 @@ func (api *TwitterClient) GetUsers() (model.UsersResponse, error) {
 }
 
 // BlockUsers ユーザーをブロックする
-func (api *TwitterClient) BlockUsers(id string) error {
+func (api *TwitterClient) BlockUsers(screenName string) error {
 	client := GetClient()
 	v := url.Values{}
-	v.Set("screen_name", id)
+	v.Set("screen_name", screenName)
 	res, err := client.Post(nil, api.Credentials, "https://api.twitter.com/1.1/blocks/create.json", v)
 	if err != nil {
 		return err

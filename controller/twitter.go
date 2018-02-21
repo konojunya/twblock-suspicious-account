@@ -21,7 +21,7 @@ func GetUsers(c *gin.Context) {
 
 // BlockUser ユーザーをブロックする
 func BlockUser(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("screen_name")
 	err := service.BlockUser(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, nil)
