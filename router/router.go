@@ -7,6 +7,7 @@ import (
 	"github.com/garyburd/go-oauth/oauth"
 
 	"github.com/gin-gonic/gin"
+	"github.com/konojunya/twblock-suspicious-account/middleware"
 	"github.com/konojunya/twblock-suspicious-account/service"
 )
 
@@ -58,6 +59,7 @@ func GetRouter() *gin.Engine {
 	})
 
 	api := r.Group("/api")
+	api.Use(middleware.IsAuthenticated())
 	apiRouter(api)
 
 	return r

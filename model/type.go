@@ -17,10 +17,6 @@ type UsersResponse struct {
 
 // health check struct
 type HealthCheck struct {
-	Body LimitContextAndResources `json:"body"`
-}
-
-type LimitContextAndResources struct {
 	RateLimitContext RateLimitJson `json:"rate_limit_context"`
 	Resources        ResourcesJson `json:"resources"`
 }
