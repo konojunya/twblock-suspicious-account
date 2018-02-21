@@ -82,11 +82,37 @@ func GetAccessToken(credentials *oauth.Credentials, oauthVerifier string) (*oaut
 	return at, err
 }
 
+func (api *TwitterClient) getMe() (model.User, error) {
+	client := GetClient()
+
+	res, err := client.Get(nil, api.Credentials, "https://api.twitter.com/1.1/account/verify_credentials.json", nil)
+	if err != nil {
+		return model.User{}, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return model.User{}, err
+	}
+
+	var user model.User
+	json.Unmarshal(body, &user)
+
+	return user, nil
+}
+
 // GetUsers 怪しいアカウント一覧を取得する
 func (api *TwitterClient) GetUsers() (model.UsersResponse, error) {
 	client := GetClient()
 	v := url.Values{}
-	v.Set("screen_name", "konojunya")
+	user, err := api.getMe()
+	if err != nil {
+		return model.UsersResponse{}, err
+	}
+
+	v.Set("screen_name", user.ScreeName)
+	v.Set("count", "200")
 	res, err := client.Get(nil, api.Credentials, "https://api.twitter.com/1.1/followers/list.json", v)
 	if err != nil {
 		return model.UsersResponse{}, err
