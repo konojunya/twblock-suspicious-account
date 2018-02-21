@@ -8,4 +8,5 @@ import (
 func apiRouter(api *gin.RouterGroup) {
 	api.GET("/users", controller.GetUsers)
 	api.POST("/users/:screen_name/block", controller.BlockUser)
+	api.GET("/healthcheck", controller.HealthCheck)
 }

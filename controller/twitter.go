@@ -29,3 +29,12 @@ func BlockUser(c *gin.Context) {
 	}
 	c.AbortWithStatus(http.StatusOK)
 }
+
+func HealthCheck(c *gin.Context) {
+	hc, err := service.HealthCheck()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	c.JSON(http.StatusOK, hc)
+}
