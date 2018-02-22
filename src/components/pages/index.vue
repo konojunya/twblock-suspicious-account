@@ -1,7 +1,6 @@
 <template>
   <section>
-    <button @click="next">もういっちょ！</button>
-    <ul>
+    <ul v-if="items.length > 0">
       <li v-for="(item, index) in items" :key="index" class="card-item">
         <div class="container">
           <div class="profile">
@@ -15,15 +14,19 @@
         <button class="button" @click="block" :data-id="item.screen_name">ブロックする</button>
       </li>
     </ul>
+    <div class="no-result">
+      <h1>一致する人は誰もいません</h1>
+    </div>
   </section>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
-      items: [],
-      cursor: "-1"
+      items: []
     }
   },
   created() {
@@ -33,13 +36,11 @@ export default {
     next() {
       this.getUsers()
     },
-    getUsers() {
-      fetch(`/api/users?cursor=${this.cursor}`)
-      .then((res) => { return res.json() })
-      .then((res) => {
-        this.cursor = res.next_cursor_str
-        this.items = [...res.users, ...this.items]
-      })
+    getUsers: async () => {
+      const res = await axios.get("/api/users")
+      if(res.status == 200) {
+        this.items = res.data.users
+      }
     },
     block(e) {
       const id = e.target.dataset.id

@@ -10,14 +10,15 @@ import (
 
 // GetUsers 怪しいアカウント一覧
 func GetUsers(c *gin.Context) {
-	cursor := c.Query("cursor")
-	users, err := service.GetUsers(cursor)
+	users, err := service.GetUsers()
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}
-	c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, gin.H{
+		"users": users,
+	})
 }
 
 // BlockUser ユーザーをブロックする
