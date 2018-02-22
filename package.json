@@ -5,7 +5,8 @@
   "main": "webpack.config.js",
   "dependencies": {
     "axios": "^0.18.0",
-    "vue": "^2.5.13"
+    "vue": "^2.5.13",
+    "vue-spinner": "^1.0.3"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

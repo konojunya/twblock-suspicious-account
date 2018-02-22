@@ -1,5 +1,8 @@
 <template>
   <section>
+    <div class="spinner" v-show="isLoading">
+      <pacman-loader></pacman-loader>
+    </div>
     <ul v-if="items.length > 0">
       <li v-for="(item, index) in items" :key="index" class="card-item">
         <div class="container">
@@ -14,19 +17,25 @@
         <button class="button" @click="block" :data-id="item.screen_name">ブロックする</button>
       </li>
     </ul>
-    <div class="no-result">
-      <h1>一致する人は誰もいません</h1>
+    <div class="no-result" v-else>
+      <h1>{{errorMessage}}</h1>
     </div>
   </section>
 </template>
 
 <script>
 import axios from 'axios'
+import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
 
 export default {
+  components: {
+    PacmanLoader
+  },
   data() {
     return {
-      items: []
+      isLoading: true,
+      items: [],
+      errorMessage: ""
     }
   },
   created() {
@@ -36,9 +45,16 @@ export default {
     next() {
       this.getUsers()
     },
-    getUsers: async () => {
+    async healthcheck() {
+      const res = await axios.get("/api/healthcheck")
+      const remaining = res.data.resources.followers.followersList.remaining
+      this.errorMessage = remaining == 0 ? "API LIMITです" : "怪しいアカウントが見つかりませんでした"
+    },
+    async getUsers() {
       const res = await axios.get("/api/users")
       if(res.status == 200) {
+        this.isLoading = false
+        if(res.data.users.length == 0) this.healthcheck()
         this.items = res.data.users
       }
     },
@@ -120,5 +136,13 @@ ul {
       padding: 10px 0;
     }
   }
+}
+.spinner {
+  background: white;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
