@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/url"
@@ -128,6 +129,8 @@ func (api *TwitterClient) GetUsers(coursor string) (*model.UsersResponse, error)
 		return &model.UsersResponse{}, err
 	}
 	defer res.Body.Close()
+
+	fmt.Println(res.Request.URL)
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
