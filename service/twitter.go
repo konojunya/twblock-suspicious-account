@@ -29,8 +29,8 @@ func SetKeys(consumerKey, consumerSecret string) {
 }
 
 // GetUsers 怪しいユーザー一覧
-func GetUsers(coursor string) (model.UsersResponse, error) {
-	users, err := suspiciousFilter(api.GetUsers(coursor))
+func GetUsers(cursor string) (model.UsersResponse, error) {
+	users, err := suspiciousFilter(api.GetUsers(cursor))
 	if err != nil {
 		return model.UsersResponse{}, err
 	}
@@ -111,7 +111,7 @@ func (api *TwitterClient) getMe() (model.User, error) {
 }
 
 // GetUsers 怪しいアカウント一覧を取得する
-func (api *TwitterClient) GetUsers(coursor string) (*model.UsersResponse, error) {
+func (api *TwitterClient) GetUsers(cursor string) (*model.UsersResponse, error) {
 	client := GetClient()
 	v := url.Values{}
 	user, err := api.getMe()
@@ -121,8 +121,8 @@ func (api *TwitterClient) GetUsers(coursor string) (*model.UsersResponse, error)
 
 	v.Set("screen_name", user.ScreeName)
 	v.Set("count", "200")
-	v.Set("coursor", coursor)
-	log.Printf("coursor: %v\n", coursor)
+	v.Set("cursor", cursor)
+	log.Printf("cursor: %v\n", cursor)
 
 	res, err := client.Get(nil, api.Credentials, "https://api.twitter.com/1.1/followers/list.json", v)
 	if err != nil {
@@ -139,7 +139,7 @@ func (api *TwitterClient) GetUsers(coursor string) (*model.UsersResponse, error)
 
 	usersRes := &model.UsersResponse{}
 	json.Unmarshal(body, &usersRes)
-	log.Printf("next coursor: %v\n", usersRes.NextCursorStr)
+	log.Printf("next cursor: %v\n", usersRes.NextCursorStr)
 
 	return usersRes, nil
 }

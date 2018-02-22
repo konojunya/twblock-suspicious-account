@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       items: [],
-      coursor: "-1"
+      cursor: "-1"
     }
   },
   created() {
@@ -34,10 +34,10 @@ export default {
       this.getUsers()
     },
     getUsers() {
-      fetch(`/api/users?coursor=${this.coursor}`)
+      fetch(`/api/users?cursor=${this.cursor}`)
       .then((res) => { return res.json() })
       .then((res) => {
-        this.coursor = res.next_cursor_str
+        this.cursor = res.next_cursor_str
         this.items = [...res.users, ...this.items]
       })
     },

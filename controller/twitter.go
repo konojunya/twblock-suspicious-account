@@ -10,8 +10,8 @@ import (
 
 // GetUsers 怪しいアカウント一覧
 func GetUsers(c *gin.Context) {
-	coursor := c.Query("coursor")
-	users, err := service.GetUsers(coursor)
+	cursor := c.Query("cursor")
+	users, err := service.GetUsers(cursor)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, nil)
