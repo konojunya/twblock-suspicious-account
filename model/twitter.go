@@ -36,8 +36,8 @@ type BlocksJson struct {
 }
 
 type FollowersJson struct {
-	List LimitsInfo `json:"followersList"`
-	Ids  LimitsInfo `json:"followersIds"`
+	List LimitsInfo `json:"/followers/list"`
+	Ids  LimitsInfo `json:"/followers/ids"`
 }
 
 type LimitsInfo struct {

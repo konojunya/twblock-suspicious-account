@@ -45,10 +45,26 @@ export default {
     next() {
       this.getUsers()
     },
-    async healthcheck() {
+    async healthcheck(type) {
+      let message = ""
+
       const res = await axios.get("/api/healthcheck")
-      const remaining = res.data.resources.followers.followersList.remaining
-      this.errorMessage = remaining == 0 ? "API LIMITです" : "怪しいアカウントが見つかりませんでした"
+
+      const followersRemaining = res.data.resources.followers["/followers/ids"].remaining
+      const blockRemaining = res.data.resources.blocks["/blocks/list"].remaining
+
+      switch(type) {
+        case "blocks":
+          message = blockRemaining == 0 ? "" : ""
+          break;
+        case "followers":
+          message = followersRemaining == 0 ? "API LIMITです" : "ブロックに失敗しました。"
+          break;
+        default:
+          remaining = followersRemaining == 0 ? "API LIMITです" : "怪しいアカウントが見つかりませんでした。"
+      }
+
+      this.errorMessage = message
     },
     async getUsers() {
       const res = await axios.get("/api/users")
