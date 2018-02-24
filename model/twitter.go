@@ -11,8 +11,8 @@ type User struct {
 
 // UsersResponse Twitter response
 type UsersResponse struct {
-	Users         []User `json:"users"`
-	NextCursorStr string `json:"next_cursor_str"`
+	Ids           []string `json:"ids"`
+	NextCursorStr string   `json:"next_cursor_str"`
 }
 
 // health check struct

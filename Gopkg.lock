@@ -2,34 +2,16 @@
 
 
 [[projects]]
-  name = "github.com/ChimeraCoder/anaconda"
+  name = "github.com/PuerkitoBio/goquery"
   packages = ["."]
-  revision = "0cb3e4c3ff8c6df5c73d5058c64e9c4eb6299c4b"
+  revision = "09540e565986583836b5fc792fe951ec5fd201dd"
+  version = "v1.3.0"
+
+[[projects]]
+  name = "github.com/andybalholm/cascadia"
+  packages = ["."]
+  revision = "901648c87902174f774fac311d7f176f8647bdaa"
   version = "v1.0.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/ChimeraCoder/tokenbucket"
-  packages = ["."]
-  revision = "c5a927568de7aad8a58127d80bcd36ca4e71e454"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/azr/backoff"
-  packages = ["."]
-  revision = "53511d3c733003985b0b76f733df1f4d0095ee6a"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/dustin/go-jsonpointer"
-  packages = ["."]
-  revision = "ba0abeacc3dcca5b9b20f31509c46794edbc9965"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/dustin/gojson"
-  packages = ["."]
-  revision = "2e71ec9dd5adce3b168cd0dbde03b5cc04951c30"
 
 [[projects]]
   branch = "master"
@@ -80,7 +62,11 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
-  packages = ["context"]
+  packages = [
+    "context",
+    "html",
+    "html/atom"
+  ]
   revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
 
 [[projects]]
@@ -104,6 +90,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9620bde2334fe06706c682ad402a99db100aa1a3b75361f10f0ea5add33c5d6d"
+  inputs-digest = "3eac777dafba841da2e045effae122b5cf613a8084e9d13e12566924188c95a9"
   solver-name = "gps-cdcl"
   solver-version = 1
