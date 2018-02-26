@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +11,6 @@ import (
 func GetUsers(c *gin.Context) {
 	users, err := service.GetUsers()
 	if err != nil {
-		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}

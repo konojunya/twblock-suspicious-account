@@ -33,7 +33,7 @@ func GetRouter() *gin.Engine {
 	r.LoadHTMLGlob("view/*")
 
 	r.GET("/", func(c *gin.Context) {
-		if twitter.GetClient() == nil {
+		if !twitter.CanUse() {
 			c.HTML(http.StatusOK, "login.html", nil)
 		} else {
 			c.HTML(http.StatusOK, "index.html", nil)

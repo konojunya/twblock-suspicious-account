@@ -2,16 +2,17 @@ package twitter
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"log"
 	"net/url"
 
 	"github.com/konojunya/twblock-suspicious-account/model"
+	"github.com/konojunya/twblock-suspicious-account/service/scraping"
 )
 
 // GetUsers 怪しいアカウント一覧を取得する
 func (api *Client) GetUsers() ([]model.User, error) {
 	users := make([]model.User, 0)
+	userCh := make(chan model.UserWithErr)
+	count := 0
 
 	v := url.Values{}
 	user, err := api.GetMe()
@@ -22,46 +23,52 @@ func (api *Client) GetUsers() ([]model.User, error) {
 	v.Set("screen_name", user.ScreeName)
 	v.Set("count", "200")
 
-	// nextCursor := "-1"
+	nextCursor := "-1"
 
-	// for {
-	// 	v.Set("cursor", nextCursor)
+	for {
+		v.Set("cursor", nextCursor)
 
-	// 	res, err := oauthClient.Get(nil, api.Credentials, "https://api.twitter.com/1.1/followers/list.json", v)
-	// 	if err != nil {
-	// 		return users, err
-	// 	}
+		body, err := requestClient(api.credentials, "https://api.twitter.com/1.1/followers/ids.json", v)
+		if err != nil {
+			return users, err
+		}
 
-	// 	defer res.Body.Close()
+		usersRes := &model.UsersResponse{}
+		json.Unmarshal(body, &usersRes)
 
-	// 	body, err := ioutil.ReadAll(res.Body)
-	// 	if err != nil {
-	// 		return users, err
-	// 	}
+		count += len(usersRes.Ids)
 
-	// 	usersRes := &model.UsersResponse{}
-	// 	json.Unmarshal(body, &usersRes)
+		for _, id := range usersRes.Ids {
+			go func(id int, userCh chan model.UserWithErr) {
+				user, err := scraping.GetUserFromTwitter(id)
+				userCh <- model.UserWithErr{
+					User: user,
+					Err:  err,
+				}
+			}(id, userCh)
+		}
 
-	// 	nextCursor = usersRes.NextCursorStr
+		nextCursor = usersRes.NextCursorStr
 
-	// 	if nextCursor == "" || nextCursor == "0" {
-	// 		break
-	// 	}
+		if nextCursor == "" || nextCursor == "0" {
+			break
+		}
 
-	// }
+	}
+
+	for i := 0; i < count; i++ {
+		r := <-userCh
+		if r.Err == nil {
+			users = append(users, r.User)
+		}
+	}
 
 	return users, nil
 }
 
+// GetMe 認証したユーザーの情報を取得する
 func (api *Client) GetMe() (model.User, error) {
-	log.Printf("api: %v\n", api)
-	res, err := oauthClient.Get(nil, api.credentials, "https://api.twitter.com/1.1/account/verify_credentials.json", nil)
-	if err != nil {
-		return model.User{}, err
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := requestClient(api.credentials, "https://api.twitter.com/1.1/account/verify_credentials.json", nil)
 	if err != nil {
 		return model.User{}, err
 	}

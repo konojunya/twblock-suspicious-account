@@ -9,10 +9,16 @@ type User struct {
 	ProfileImageURLHttps string `json:"profile_image_url_https"`
 }
 
+// UserWithErr twitter user model with error for goroutine
+type UserWithErr struct {
+	User User
+	Err  error
+}
+
 // UsersResponse Twitter response
 type UsersResponse struct {
-	Ids           []string `json:"ids"`
-	NextCursorStr string   `json:"next_cursor_str"`
+	Ids           []int  `json:"ids"`
+	NextCursorStr string `json:"next_cursor_str"`
 }
 
 // health check struct

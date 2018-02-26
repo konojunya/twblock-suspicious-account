@@ -10,7 +10,7 @@ import (
 
 func IsAuthenticated() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if twitter.GetClient() == nil {
+		if !twitter.CanUse() {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}

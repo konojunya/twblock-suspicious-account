@@ -55,13 +55,13 @@ export default {
 
       switch(type) {
         case "blocks":
-          message = blockRemaining == 0 ? "" : ""
+          message = blockRemaining == 0 ? "API LIMITです" : "ブロックに失敗しました。"
           break;
         case "followers":
-          message = followersRemaining == 0 ? "API LIMITです" : "ブロックに失敗しました。"
+          message = followersRemaining == 0 ? "API LIMITです" : "怪しいアカウントが見つかりませんでした。"
           break;
         default:
-          remaining = followersRemaining == 0 ? "API LIMITです" : "怪しいアカウントが見つかりませんでした。"
+          message = followersRemaining == 0 ? "API LIMITです" : "怪しいアカウントが見つかりませんでした。"
       }
 
       this.errorMessage = message
